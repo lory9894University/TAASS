@@ -1,0 +1,3 @@
+[submodule "ComandApp"]
+	path = ComandApp
+	url = git@github.com:lory9894University/ComandApp.git
