@@ -8,6 +8,7 @@ class SpringDbSpikeApplicationTests {
 
     @Test
     void contextLoads() {
+        return;
     }
 
 }

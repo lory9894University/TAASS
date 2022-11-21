@@ -1,0 +1,54 @@
+version: '3'
+services:
+  dbmariadb:
+    container_name: mariadb
+    image: "mariadb"
+    ports:
+      - "3306"
+    networks:
+      - spike-spring-docker-net
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: pinocchio
+      MARIADB_DATABASE: testdb
+    restart: unless-stopped
+  app:
+    build: .
+    image: spike-spring-docker
+    container_name: spike-spring-docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbmariadb
+    networks:
+      - spike-spring-docker-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/testdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=pinocchio
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 50
+    ports:
+      - "5050:50"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - dbmariadb
+    networks:
+      - spike-spring-docker-net
+volumes:
+  db-data:
+  pgadmin-data:
+networks:
+  spike-spring-docker-net:
+    driver: bridge
+
